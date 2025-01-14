@@ -2,6 +2,8 @@ import streamlit as st
 import numpy as np
 import pandas as pd
 import joblib
+import os
+import requests
 
 # Set the browser title and favicon
 st.set_page_config(
@@ -10,7 +12,16 @@ st.set_page_config(
     layout="centered",  # Layout can be "centered" or "wide"
 )
 # Load the saved preprocessor and model
-preprocessor, model = joblib.load('pipeline_and_model.pkl')
+#preprocessor, model = joblib.load('pipeline_and_model.pkl')
+model_path = "pipeline_and_model.pkl"
+model_url = "https://your-storage-service.com/pipeline_and_model.pkl"
+
+if not os.path.exists(model_path):
+    response = requests.get(model_url)
+    with open(model_path, "wb") as f:
+        f.write(response.content)
+
+preprocessor, model = joblib.load(model_path)
 
 # Define the column names for input data (match training data)
 input_columns = [
